@@ -28,19 +28,24 @@ function App() {
   }, [products]);
 
   return (
-    <div className="App">
-      <div className="w-full h-12 bg-cyan-200 flex justify-center items-center">
-        <h1>Inventory App</h1>
-        <span className="rounded-full flex justify-center w-6 h-6 bg-cyan-950 border-stone-700 caret-yellow-500">
+    <div className="bg-slate-800 min-h-screen">
+      <div className="h-12 flex justify-center items-center gap-x-4 bg-slate-700 mb-6">
+        <h1 className="md:text-xl text-sm font-bold text-slate-300">
+          Inventory App
+        </h1>
+        <span className="rounded-full flex justify-center items-center w-7 h-7 bg-slate-500 border-2 border-slate-300 font-bold text-slate-300">
           {products.length}
         </span>
       </div>
-      <AddCategory setCategories={setCategories} categories={categories} />
-      <AddProduct
-        products={products}
-        setProducts={setProducts}
-        categories={categories}
-      />
+      <div class="container max-w-screen-sm mx-auto root">
+        <AddCategory setCategories={setCategories} categories={categories} />
+        <AddProduct
+          products={products}
+          setProducts={setProducts}
+          categories={categories}
+        />
+      </div>
+
       <ProductsList products={products} />
     </div>
   );
