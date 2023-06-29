@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const AddProduct = ({ setProducts, products, categories }) => {
   const [formValues, setFormValues] = useState({
@@ -51,9 +51,10 @@ const AddProduct = ({ setProducts, products, categories }) => {
         <label>category</label>
         <select name="productCategory" onChange={changeHandler}>
           <option value="">select a category</option>
-          {categories.map((item) => (
-            <option value={item.id}>{item.title}</option>
-          ))}
+          {categories &&
+            categories.map((item) => (
+              <option value={item.id}>{item.title}</option>
+            ))}
         </select>
         <div>
           <button>Cancel</button>
