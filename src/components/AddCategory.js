@@ -1,29 +1,28 @@
 import { useState, useEffect } from "react";
 
-const AddCategory = ({ setCategories, categories }) => {
-  const [formValues, setFormValues] = useState({ title: "", desc: "" });
-
+const AddCategory = ({ setCategories }) => {
+  const [formData, setFormData] = useState({ title: "", description: "" });
+  const [isShow, setIsShow] = useState(false);
   const submitHandler = (e) => {
     e.preventDefault();
-    if (!formValues.title || !formValues.desc) return;
-    setCategories([
-      ...categories,
-      {
-        title: formValues.title,
-        desc: formValues.desc,
-        id: new Date().getTime(),
-        createdAt: new Date().toISOString(),
-      },
-    ]);
-    setFormValues({ title: "", desc: "" });
+    if (!formData.title || !formData.desc) return;
+    const newCategory = {
+      ...formData,
+      id: new Date().getTime(),
+      createdAt: new Date().toISOString(),
+    };
+    setCategories((prevState) => [...prevState, newCategory]);
+    setFormData({ title: "", desc: "" });
+    setIsShow(false);
   };
   const changeHandler = (e) => {
-    setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   return (
     <section className="">
-      <div className="mb-6">
+      <div className={`mb-6 ${!isShow && "hidden"}`}>
         <h2 className="text-xl text-slate-300 font-bold mb-2">
           Add New Category
         </h2>
@@ -36,7 +35,7 @@ const AddCategory = ({ setCategories, categories }) => {
             <input
               className="bg-transparent rounded-xl border border-slate-500 text-slate-400"
               type="text"
-              value={formValues.title}
+              value={formData.title}
               onChange={changeHandler}
               name="title"
             />
@@ -44,7 +43,7 @@ const AddCategory = ({ setCategories, categories }) => {
           <div>
             <label className="block mb-1 text-slate-400">description</label>
             <textarea
-              value={formValues.desc}
+              value={formData.desc}
               onChange={changeHandler}
               name="desc"
               className="bg-transparent rounded-xl border border-slate-500 text-slate-400 w-full"
@@ -52,7 +51,10 @@ const AddCategory = ({ setCategories, categories }) => {
           </div>
 
           <div className="flex items-center justify-between gap-x-4">
-            <button className="flex-1 border border-slate-400 text-slate-400 rounded-xl py-2">
+            <button
+              className="flex-1 border border-slate-400 text-slate-400 rounded-xl py-2"
+              onClick={() => setIsShow(false)}
+            >
               Cancel
             </button>
             <button className="flex-1 bg-slate-500 text-slate-200 rounded-xl py-2 addCategoryBtn">
@@ -61,7 +63,13 @@ const AddCategory = ({ setCategories, categories }) => {
           </div>
         </form>
       </div>
-      <button class="text-slate-600 text-lg mb-4 font-medium">
+      <button
+        className={`text-slate-600 text-lg mb-4 font-medium ${
+          isShow && "hidden"
+        }`}
+        onClick={() => setIsShow((prevState) => !prevState)}
+        type="submit"
+      >
         Add new category?
       </button>
     </section>

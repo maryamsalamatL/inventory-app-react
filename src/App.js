@@ -2,19 +2,52 @@ import "./App.css";
 import AddCategory from "./components/AddCategory";
 import AddProduct from "./components/AddProduct";
 import ProductsList from "./components/ProductsList";
+import NavBar from "./components/Navbar";
+import Filter from "./components/Filter";
 import { useState, useEffect } from "react";
 
 function App() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [sort, setSort] = useState("latest");
+  const [searchValue, setSearchValue] = useState("");
+
+  const searchHandler = ({ target }) => {
+    setSearchValue(target.value.trim().toLowerCase());
+  };
+
+  const sortHandler = ({ target: { value } }) => {
+    setSort(value);
+  };
 
   useEffect(() => {
-    const storageCategories =
-      JSON.parse(localStorage.getItem("categories")) || [];
-    const storageProducts = JSON.parse(localStorage.getItem("products")) || [];
+    let result = products;
+    result = sortFilter(result, sort);
+    result = searchFilter(result, searchValue);
+    setFilteredProducts(result);
+  }, [sort, searchValue, products]);
 
-    setCategories(storageCategories);
-    setProducts(storageProducts);
+  const sortFilter = (products) => {
+    const sortedProducts = [...products];
+    return sortedProducts.sort((a, b) => {
+      if (sort === "latest")
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      else return new Date(a.createdAt) - new Date(b.createdAt);
+    });
+  };
+  const searchFilter = (products) => {
+    return products.filter((product) =>
+      product.title.toLowerCase().includes(searchValue)
+    );
+  };
+
+  useEffect(() => {
+    const savedCategories =
+      JSON.parse(localStorage.getItem("categories")) || [];
+    const savedProducts = JSON.parse(localStorage.getItem("products")) || [];
+    setCategories(savedCategories);
+    setProducts(savedProducts);
   }, []);
 
   useEffect(() => {
@@ -28,25 +61,24 @@ function App() {
   }, [products]);
 
   return (
-    <div className="bg-slate-800 min-h-screen">
-      <div className="h-12 flex justify-center items-center gap-x-4 bg-slate-700 mb-6">
-        <h1 className="md:text-xl text-sm font-bold text-slate-300">
-          Inventory App
-        </h1>
-        <span className="rounded-full flex justify-center items-center w-7 h-7 bg-slate-500 border-2 border-slate-300 font-bold text-slate-300">
-          {products.length}
-        </span>
-      </div>
-      <div class="container max-w-screen-sm mx-auto root">
-        <AddCategory setCategories={setCategories} categories={categories} />
-        <AddProduct
+    <div className="bg-slate-800 min-h-screen pb-20">
+      <NavBar products={products} />
+      <div class="container max-w-screen-sm mx-auto root p-3">
+        <AddCategory setCategories={setCategories} />
+        <AddProduct setProducts={setProducts} categories={categories} />
+        <Filter
+          sort={sort}
+          onSort={sortHandler}
+          searchValue={searchValue}
+          onSearch={searchHandler}
+        />
+        <ProductsList
           products={products}
-          setProducts={setProducts}
+          filteredProducts={filteredProducts}
           categories={categories}
+          setProducts={setProducts}
         />
       </div>
-
-      <ProductsList products={products} />
     </div>
   );
 }

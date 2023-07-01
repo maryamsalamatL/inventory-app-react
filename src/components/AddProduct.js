@@ -1,32 +1,27 @@
 import { useState, useEffect } from "react";
 
-const AddProduct = ({ setProducts, products, categories }) => {
-  const [formValues, setFormValues] = useState({
+const AddProduct = ({ setProducts, categories }) => {
+  const [formData, setFormData] = useState({
     title: "",
-    qty: "",
-    productCategory: "",
+    quantity: "",
+    categoryId: "",
   });
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (!formValues.title || !formValues.qty || !formValues.productCategory)
-      return;
-    setProducts([
-      ...products,
-      {
-        title: formValues.title,
-        category: formValues.productCategory,
-        quantity: formValues.qty,
-        id: new Date().getTime(),
-        createdAt: new Date().toISOString(),
-      },
-    ]);
-    setFormValues({ title: "", qty: "", productCategory: "" });
+    if (!formData.title || !formData.quantity || !formData.categoryId) return;
+    const newProduct = {
+      ...formData,
+      id: new Date().getTime(),
+      createdAt: new Date().toISOString(),
+    };
+    setProducts((prevState) => [...prevState, newProduct]);
+    setFormData({ title: "", quantity: "", categoryId: "" });
   };
   const changeHandler = (e) => {
-    setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
-  console.log(formValues);
 
   return (
     <section className="mb-6">
@@ -39,7 +34,7 @@ const AddProduct = ({ setProducts, products, categories }) => {
           <label className="block mb-1 text-slate-400">title</label>
           <input
             type="text"
-            value={formValues.title}
+            value={formData.title}
             onChange={changeHandler}
             name="title"
             className="bg-transparent rounded-xl border border-slate-500 text-slate-400"
@@ -49,25 +44,30 @@ const AddProduct = ({ setProducts, products, categories }) => {
           <label className="block mb-1 text-slate-400">quantity</label>
           <input
             type="number"
-            value={formValues.qty}
+            value={formData.quantity}
             onChange={changeHandler}
-            name="qty"
+            name="quantity"
             className="bg-transparent rounded-xl border border-slate-500 text-slate-400"
           />
         </div>
         <div>
           <label className="block mb-1 text-slate-400">category</label>
           <select
-            name="productCategory"
+            name="categoryId"
             onChange={changeHandler}
             className="bg-transparent text-slate-400 rounded-xl w-full"
+            value={formData.categoryId}
           >
             <option value="" className="bg-slate-500 text-slate-300">
               select a category
             </option>
             {categories &&
               categories.map((item) => (
-                <option value={item.id} className="bg-slate-500 text-slate-300">
+                <option
+                  value={item.id}
+                  className="bg-slate-500 text-slate-300"
+                  key={item.id}
+                >
                   {item.title}
                 </option>
               ))}
