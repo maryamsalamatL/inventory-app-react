@@ -10,28 +10,33 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [sort, setSort] = useState("latest");
+  const [sortDate, setSortDate] = useState("latest");
   const [searchValue, setSearchValue] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const searchHandler = ({ target }) => {
     setSearchValue(target.value.trim().toLowerCase());
   };
 
-  const sortHandler = ({ target: { value } }) => {
-    setSort(value);
+  const sortDateHandler = ({ target: { value } }) => {
+    setSortDate(value);
+  };
+  const selectCategoryHandler = ({ target: { value } }) => {
+    setSelectedCategory(value);
   };
 
   useEffect(() => {
     let result = products;
-    result = sortFilter(result, sort);
-    result = searchFilter(result, searchValue);
+    result = dateFilter(result);
+    result = searchFilter(result);
+    result = categoryFilter(result);
     setFilteredProducts(result);
-  }, [sort, searchValue, products]);
+  }, [sortDate, searchValue, products, selectedCategory]);
 
-  const sortFilter = (products) => {
+  const dateFilter = (products) => {
     const sortedProducts = [...products];
     return sortedProducts.sort((a, b) => {
-      if (sort === "latest")
+      if (sortDate === "latest")
         return new Date(b.createdAt) - new Date(a.createdAt);
       else return new Date(a.createdAt) - new Date(b.createdAt);
     });
@@ -39,6 +44,12 @@ function App() {
   const searchFilter = (products) => {
     return products.filter((product) =>
       product.title.toLowerCase().includes(searchValue)
+    );
+  };
+  const categoryFilter = (products) => {
+    if (selectedCategory === "all") return products;
+    return products.filter(
+      (product) => product.categoryId === selectedCategory
     );
   };
 
@@ -67,10 +78,13 @@ function App() {
         <AddCategory setCategories={setCategories} />
         <AddProduct setProducts={setProducts} categories={categories} />
         <Filter
-          sort={sort}
-          onSort={sortHandler}
+          sort={sortDate}
+          onSort={sortDateHandler}
           searchValue={searchValue}
           onSearch={searchHandler}
+          categories={categories}
+          onSelectCategory={selectCategoryHandler}
+          selectedCategory={selectedCategory}
         />
         <ProductsList
           products={products}

@@ -36,9 +36,7 @@ const ProductsList = ({
                   <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-500 border-2 border-slate-300 text-slate-300">
                     {product.quantity}
                   </span>
-                  <button className="border px-2 py-0.5 rounded-2xl border-green-400 text-green-400">
-                    edit
-                  </button>
+
                   <button
                     onClick={() => deleteProductHandler(product.id)}
                     className="border px-2 py-0.5 rounded-2xl border-red-400 text-red-400"

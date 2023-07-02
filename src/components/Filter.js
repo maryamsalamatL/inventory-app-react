@@ -1,4 +1,12 @@
-const Filter = ({ sort, searchValue, onSort, onSearch }) => {
+const Filter = ({
+  sort,
+  onSort,
+  searchValue,
+  onSearch,
+  categories,
+  onSelectCategory,
+  selectedCategory,
+}) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -29,6 +37,26 @@ const Filter = ({ sort, searchValue, onSort, onSearch }) => {
           <option value="earliest" className="bg-slate-500 text-slate-300">
             earliest
           </option>
+        </select>
+      </div>
+      <div className="flex items-center justify-between mb-3">
+        <label htmlFor="sort-Category" className="text-lg text-slate-500">
+          Category
+        </label>
+        <select
+          className="bg-transparent text-slate-400 rounded-xl"
+          id="sort-Category"
+          onChange={onSelectCategory}
+          value={selectedCategory}
+        >
+          <option value="all" className="bg-slate-500 text-slate-300">
+            All
+          </option>
+          {categories.map((item) => (
+            <option value={item.id} className="bg-slate-500 text-slate-300">
+              {item.title}
+            </option>
+          ))}
         </select>
       </div>
     </div>
